@@ -1,0 +1,150 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{multicol,lipsum,graphicx,float,ragged2e,mdframed}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{pifont}
+\usepackage{CJKutf8}
+\setlength{\parindent}{0pt}
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+\setcounter{tocdepth}{2}
+
+\title{Blood on the Clocktower}
+\author{Full character almanac}
+\date{last updated 27-12-2025}
+\begin{document}
+\maketitle
+\begin{multicols}{2}
+\tableofcontents
+\end{multicols}
+\clearpage
+
+\begin{multicols}{2}
+\subsection{Legion}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{icons/Icon_legion.png}\end{figure}
+{\large Each night*, a player might die. Executions fail if only evil voted. You register as a Minion too. [Most players are Legion]}
+\newline
+\newline
+{\large \textit{"We are the chill wind on a winter’s day. We are the shadow in the moonless night. We are the poison in your tea and the whisper in your ear. We are everywhere."}}
+\newline
+
+\subsubsection{Summary}
+Legion is many Demons.
+\begin{itemize}
+\item The recommended number of good and evil players is the reverse of the normal. For example, for a ten player game, there are roughly seven Legion and three good players.
+\item The players that are not Legion may be Townsfolk or Outsiders, in any combination.
+\item If at least one good player voted for the nomination, and that player is “about to die”, then the execution happens as normal. If only evil players vote for a nomination, the vote tally for that nominee is zero.
+\item Each Legion registers as a Minion as well as a Demon.
+\item The Storyteller chooses which player dies at night.
+\item If only one good player remains alive, the Storyteller may declare that evil wins, since good cannot win.
+\item The Storyteller can decide not to give Legion players bluffs.
+\end{itemize}
+
+\subsubsection{How to Run}
+\begin{itemize}
+\item During the first night, during the Demon Info step, let all Legion players make eye contact. (You may want to point to the non-Legion players so that Legion knows who they are.)
+\item Each night except the first, you may decide that a player dies.
+\item When counting votes, count out loud, as normal. If the vote tally is enough to make a player about to die but only evil players voted, declare that the vote tally is zero.
+\item Most nights, kill a Legion. Killing a good player is usually unfair. Your aim is to get to three players alive—two good players and one Legion player. On the final day, if the players don’t execute, kill a good player that night so that evil wins.
+\item If the players try to force others to vote to “test whether the vote tally is zero”, you may instead declare that a zero-tally vote is successful but secretly keep a record of which player is really about to die by marking them with Legion’s ABOUT TO DIE reminder, then execute them when nominations are over. This keeps Legion games mysterious and challenging.
+\end{itemize}
+
+\subsubsection{Examples}
+\begin{itemize}
+\item The only good players are the Fortune Teller and the Slayer. 6 Legion and the Slayer vote to execute the Fortune Teller. They are executed, and evil wins.
+\item 4 players are alive. 3 Legion and no good players vote to execute Julian. Julian is not executed. Alex, who has 2 votes, 1 of which is a good player, is executed instead. Evil wins.
+\end{itemize}
+
+\textit{Designed by The Pandemonium Institute; icon by Steven Medway}
+
+\end{multicols}
+\clearpage
+
+
+\begin{multicols}{2}
+\subsection{Noble}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{icons/Icon_noble.png}\end{figure}
+{\large You start knowing 3 players, 1 and only 1 of which is evil.}
+\newline
+\newline
+{\large \textit{"Sarcasm is indeed the lowest form of wit. But speaking in response to your criticism, Sir, it is, nevertheless, a form of wit."}}
+\newline
+
+\subsubsection{Summary}
+The Noble learns that one of three players is evil.
+\begin{itemize}
+\item The Noble learns their information on the first night only.
+\item If a Noble is created mid-game, the Noble learns their information on their first night.
+\item The Noble learns two good players and one evil player. They may not learn one good player and two evil players. They may not learn three evil players.
+\end{itemize}
+
+\subsubsection{How to Run}
+\begin{itemize}
+\item While preparing the first night, mark two good players' character tokens with Noble KNOW reminders. Mark any evil player's character token with the third KNOW reminder.
+\item During the first night, wake the Noble. Point to all three players marked KNOW. Put the Noble to sleep.
+\end{itemize}
+
+\subsubsection{Examples}
+\begin{itemize}
+\item The Noble is shown Marianna, Alex, and Abdallah. Marianna and Abdallah are good, and Alex is evil.
+\item The Noble learns Doug, Lachlan and Ben. Doug is the Chambermaid. Lachlan is the Barber. Ben is the Recluse, who has registered as evil to the Noble.
+\item On the third night, the Pit-Hag turns Amy into the Noble. Amy learns that 1 of Evin, Sarah, or Julian is evil. However, Sarah is the evil Spy and has registered as good, and Julian is the Po, who is also evil.
+\end{itemize}
+
+\textit{Designed by The Pandemonium Institute; icon by Caitlin Murphy}
+
+\end{multicols}
+\clearpage
+
+
+\begin{multicols}{2}
+\subsection{Village Idiot}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{icons/Icon_villageidiot.png}\end{figure}
+{\large Each night, choose a player: you learn their alignment. [+0 to +2 Village Idiots. 1 of the extras is drunk]}
+\newline
+\newline
+{\large \textit{"Roses are blue, and violets are red, Please reverse what I just said."}}
+\newline
+
+\subsubsection{Summary}
+The Village Idiots are a group that learn players’ alignments.
+\begin{itemize}
+\item The Village Idiot that is drunk is chosen by the Storyteller during the game setup.
+\item There may be one, two, or three Village Idiots in play, irrespective of the number of players.
+\item If there is only one Village Idiot in play, they are sober.
+\item The drunk Village Idiot may get true information.
+\item When Village Idiots are added to the game during setup, they replace other Townsfolk.
+\item If a Village Idiot is created mid-game, only one is created.
+\item Village Idiots act one at a time, not all together.
+\item If all sober Village Idiots exit play, the remaining drunk Village Idiot remains drunk.
+\item If a sober Village Idiot becomes drunk or poisoned by other means, the drunk Village Idiot remains drunk.
+\end{itemize}
+
+\subsubsection{How to Run}
+\begin{itemize}
+\item While setting up the game, before putting the character tokens in the bag, replace zero, one or two Townsfolk tokens with Village Idiot tokens. While preparing the first night, mark one Village Idiot with the DRUNK reminder.
+\item During each night, wake any Village Idiot. They point to a player. Give a thumbs up or a thumbs down. Put that Village Idiot to sleep. Repeat until all Village Idiots have acted.
+\end{itemize}
+
+\subsubsection{Examples}
+\begin{itemize}
+\item Doug, Lewis, and Amy are all Village Idiots. Doug is drunk. At night, they all choose Evin, the Kazali. Doug learns that Evin is good. Lewis and Amy learn that Evin is evil.
+\item Ben and Marianna are Village Idiots. Marianna is drunk. Sarah is evil, and bluffing as the Village Idiot. Ben chooses Sarah and learns that she is evil. Marianna chooses the Heretic player and learns that they are good. Sarah claims to have chosen Ben and learnt that he is evil.
+\end{itemize}
+
+\textit{Designed by The Pandemonium Institute; icon by Chloe McDougall}
+
+\end{multicols}
+\clearpage
+
+
+\end{document}

@@ -1,8 +1,12 @@
 from mediawiki import MediaWiki
 from bs4 import BeautifulSoup
+import json
 
 # VARIABLE DEFINITIONS
 emptyList = []
+characters = []
+preCharacterLaTeX = "\\documentclass{article}\n\\usepackage[margin=0.5in]{geometry}\n\\usepackage{multicol,lipsum,graphicx,float,ragged2e,mdframed}\n\\usepackage[utf8]{inputenc}\n\\usepackage{textcomp}\n\\usepackage{pifont}\n\\usepackage{CJKutf8}\n\\setlength{\\parindent}{0pt}\n\\tolerance=1\n\\emergencystretch=\\maxdimen\n\\hyphenpenalty=10000\n\\hbadness=10000\n\\setcounter{tocdepth}{2}\n\n\\title{Blood on the Clocktower}\n\\author{Full character almanac}\n\\date{last updated 27-12-2025}\n\\begin{document}\n\\maketitle\n\\begin{multicols}{2}\n\\tableofcontents\n\\end{multicols}\n\\clearpage\n\n"
+postCharacterLaTeX = "\\end{document}"
 
 # FUNCTION DEFINITIONS
 
@@ -13,13 +17,19 @@ def splitIntoPoints(text):
     temp[:] = [x for x in temp if len(x) > 2] # empty strings resolve as false -> you can easily filter them out by checking "if {string}"
     return temp
 
+def fetchCharacter(characterName):
+    p = botcWiki.page(characterName)
+    soup = BeautifulSoup(p.html, "html.parser")
+    testCharacter = clocktowerCharacter(characterName, soup)
+    return testCharacter
+
 # CLASS DEFINITIONS
 
 class clocktowerCharacter:
     def __init__(self, name: str, wikiText: BeautifulSoup):
         self.name = name            # Page title (e.g., "Imp")
         self.wikiText = wikiText    # Original wiki text
-        self.cType, self.ability, self.flavour, self.artist, self.summary, self.url, self.cleanedWikiText = "", "", "", "", "", "", "" 
+        self.cType, self.ability, self.flavour, self.artist, self.summary, self.url, self.cleanedWikiText, self.iconName, self.designer = "", "", "", "", "", "", "", "", ""
         self.summaryPoints, self.howToRunPoints, self.examplePoints = [], [], []
         
     def infodump(self):
@@ -44,50 +54,90 @@ class clocktowerCharacter:
         print("====================")
         
     def parseWikiText(self):
+        failCount = 0
         self.cleanedWikiText = self.wikiText.getText()
+        self.iconName = "icons/Icon_" + self.name.lower().replace(" ", "") + ".png"
+        self.designer = "The Pandemonium Institute"
         try: self.cType = str(self.wikiText.find_all("td")[1]).split('title="Character Types">')[1].split('<')[0]
-        except: self.cType = "Unknown type"
+        except:
+            self.cType = "Unknown type"
+            failCount += 1
         try: self.ability = str(self.wikiText.h2.find_all_next("p")[0]).split('"')[1].split('"')[0]
-        except: self.ability = "Ability not found."
+        except:
+            self.ability = "Ability not found."
+            failCount += 1
         try: self.flavour = str(self.wikiText.find_all("p", class_="flavour")).split('">"')[1].split('"')[0]
-        except: self.flavour = "Nobody knows which way the wind goes. Or this flavour text."
+        except:
+            self.flavour = "Nobody knows which way the wind goes. Or this flavour text."
+            failCount += 1
         try: self.artist = str(self.wikiText.find_all("td")[3])[4:-5]
-        except: self.artist = "Unknown artist"
+        except:
+            self.artist = "Unknown artist"
+            failCount += 1
         try: self.summary = str(self.wikiText.h2.find_all_next("p")[1])[3:-4].strip()
-        except: self.summary = "This character does something. Not sure what."
+        except:
+            self.summary = "This character does something. Not sure what."
+            failCount += 1
         try: self.summaryPoints = splitIntoPoints(str(self.wikiText.h2.find_all_next("ul")[0])[4:-5].replace("<li>","").replace("</li>",""))
-        except: self.summaryPoints = []
+        except:
+            self.summaryPoints = []
+            failCount += 1
         try: self.howToRunPoints = splitIntoPoints(self.cleanedWikiText.split('How to Run[edit]')[1].split('Examples[edit]')[0].strip())
-        except: self.howToRunPoints = []
+        except:
+            self.howToRunPoints = []
+            failCount += 1
         try: self.examplePoints = splitIntoPoints(self.cleanedWikiText.split('Examples[edit]')[1].split('Tips & Tricks')[0].strip())
-        except: self.examplePoints = []
-        # analyse these versions to find the number of points and then reuse the summaryPoints method
+        except:
+            self.examplePoints = []
+            failCount += 1
+        print(self.name + ": " + str(failCount) + " missing info(s)")
 
 # fetch wiki
 botcWiki = MediaWiki(url='https://wiki.bloodontheclocktower.com/api.php',
                      user_agent='clocktowerAlmanacizationator/0.0 (discord @ Panfex)')
-# temp list of character names
-characterNames = ["Washerwoman", "Butler", "Scarlet Woman", "Imp", "Scapegoat", "Deus ex Fiasco", "Big Wig"]
 
-# match wiki page name formatting
-for name in characterNames:
-    name = name.replace(" ", "_")
+# get list of character names
+characterNamesToFetch = []
+with open('roles.json', 'r') as file:
+    data = json.load(file)
+    for character in data:
+        characterNamesToFetch.append(character['name'])
+characterNamesToFetch = ["Noble", "Legion", "Village Idiot"]
 
-# step 2: for each character, pull their wiki page
+# for each name, fetch that character's info
+for name in characterNamesToFetch:
+    try:
+        fetched = fetchCharacter(name)
+        fetched.parseWikiText()
+        characters.append(fetched)
+    except:
+        print(name + " failed to pull.")
+        
+# sort characters
+tempList = sorted(characters , key=lambda x: x.name)
+characters = sorted(tempList , key=lambda x: x.cType)
 
-characterToSearch = "Noble"
-p = botcWiki.page(characterToSearch)
-soup = BeautifulSoup(p.html, "html.parser")
-# soupedText = soup.get_text(separator=" ", strip=True)
-# print(soup)
-testCharacter = clocktowerCharacter(characterToSearch, soup)
-testCharacter.parseWikiText()
-testCharacter.infodump()
+for character in characters:
+    print(character.name)
 
-# step 3: extract relevant info from wiki page and format into LaTeX
-
-
-
-# step 4: assemble full LaTeX output (as .txt file?)
+# print LaTeX output to "output.txt"
+with open("output.txt", "w") as f:
+    output = preCharacterLaTeX
+    for character in characters:
+        output += "\\begin{multicols}{2}\n\\subsection{" + character.name + "}\n\\begin{figure}[H]\n\t\\centering\n\t\\includegraphics[width=0.5\\linewidth]{" + character.iconName + "}"
+        output += "\\end{figure}\n{\\large " + character.ability + '}\n\\newline\n\\newline\n{\\large \\textit{"' + character.flavour + '"}}\n\\newline\n\n\\subsubsection{Summary}'
+        output += "\n" + character.summary + "\n\\begin{itemize}"
+        for point in character.summaryPoints:
+            output += "\n\\item " + point[2:]
+        output += "\n\\end{itemize}\n\n\\subsubsection{How to Run}\n\\begin{itemize}"
+        for point in character.howToRunPoints:
+            output += "\n\\item " + point[2:]
+        output += "\n\\end{itemize}\n\n\\subsubsection{Examples}\n\\begin{itemize}"
+        for point in character.examplePoints:
+            output += "\n\\item " + point[2:]
+        output += "\n\\end{itemize}\n\n\\textit{Designed by " + character.designer + "; icon by " + character.artist + "}\n\n\\end{multicols}\n\\clearpage\n\n"
+        print(output, file=f)
+        output = ""
+    print(postCharacterLaTeX, file=f)
 
 
