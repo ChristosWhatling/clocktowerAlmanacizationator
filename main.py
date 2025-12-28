@@ -1,6 +1,7 @@
 from mediawiki import MediaWiki
 from bs4 import BeautifulSoup
 import json
+import subprocess
 
 # VARIABLE DEFINITIONS
 emptyList = []
@@ -91,7 +92,12 @@ class clocktowerCharacter:
             self.examplePoints = []
             failCount += 1
         print(self.name + ": " + str(failCount) + " missing info(s)")
-
+        
+    def textRemedies(self):
+        self.ability = self.ability.replace("[", "\\textbf{[").replace("]", "]}")
+        self.flavour = "FLAVOUR TEMPORARILY DISABLED DUE TO COOL ISSUES"
+        
+        
 # fetch wiki
 botcWiki = MediaWiki(url='https://wiki.bloodontheclocktower.com/api.php',
                      user_agent='clocktowerAlmanacizationator/0.0 (discord @ Panfex)')
@@ -102,13 +108,14 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-characterNamesToFetch = ["Noble", "Legion", "Village Idiot"]
+characterNamesToFetch = ["Legion"]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
     try:
         fetched = fetchCharacter(name)
         fetched.parseWikiText()
+        fetched.textRemedies()
         characters.append(fetched)
     except:
         print(name + " failed to pull.")
@@ -139,5 +146,5 @@ with open("output.txt", "w") as f:
         print(output, file=f)
         output = ""
     print(postCharacterLaTeX, file=f)
-
+subprocess.run(["notepad","output.txt"])
 
