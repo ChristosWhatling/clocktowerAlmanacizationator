@@ -24,6 +24,9 @@ def fetchCharacter(characterName):
     testCharacter = clocktowerCharacter(characterName, soup)
     return testCharacter
 
+def fixAmpersands(input):
+    return input.replace("&amp;", "\\&").replace(" & ", " \\& ")
+
 # CLASS DEFINITIONS
 
 class clocktowerCharacter:
@@ -57,7 +60,7 @@ class clocktowerCharacter:
     def parseWikiText(self):
         failCount = 0
         self.cleanedWikiText = self.wikiText.getText()
-        self.iconName = "icons/Icon_" + self.name.lower().replace(" ", "") + ".png"
+        self.iconName = "icons/Icon_" + self.name.lower().replace(" ", "").replace("'", "").replace("-", "") + ".png"
         self.designer = "The Pandemonium Institute"
         try: self.cType = str(self.wikiText.find_all("td")[1]).split('title="Character Types">')[1].split('<')[0]
         except:
@@ -94,7 +97,14 @@ class clocktowerCharacter:
         print(self.name + ": " + str(failCount) + " missing info(s)")
         
     def textRemedies(self):
+        # make setup abilities bold
         self.ability = self.ability.replace("[", "\\textbf{[").replace("]", "]}")
+        # fix ampersands across all
+        self.ability = fixAmpersands(self.ability)
+        self.summary = fixAmpersands(self.summary)
+        self.summaryPoints = [fixAmpersands(point) for point in self.summaryPoints]
+        self.howToRunPoints = [fixAmpersands(point) for point in self.howToRunPoints]
+        self.examplePoints = [fixAmpersands(point) for point in self.examplePoints]
         self.flavour = "FLAVOUR TEMPORARILY DISABLED DUE TO COOL ISSUES"
         
         
@@ -108,7 +118,7 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-characterNamesToFetch = ["Legion"]
+characterNamesToFetch = ["Lleech", "Djinn"]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
