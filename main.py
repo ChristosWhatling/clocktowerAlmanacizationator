@@ -48,10 +48,21 @@ def boldFullyCapitalisedWords(input):
             boldOpen = False
         else:
             output += tempWord + trailingComma + " "
+    if boldOpen:
+        output += "}"
     return output.replace(", }", "}, ").replace(" }", "} ")
 
 def isUpperOrDecimal(input):
     return input.isupper() or input.isdecimal()
+
+def fixCharacterLinks(input):
+    if '<a href="/' in input:
+        print("Character link deletion triggered!")
+        pre = input.split('<a href="/')[0]
+        name = input.split('<a href="/')[1].split('"')[0]
+        post = input.split('</span></a>')[1]
+        return pre + name + post
+    return input
 
 # CLASS DEFINITIONS
 
@@ -125,12 +136,12 @@ class clocktowerCharacter:
     def textRemedies(self):
         # make setup abilities bold and fix % (only in the Voudon's ability so far)
         self.ability = self.ability.replace("[", "\\textbf{[").replace("]", "]}").replace("%", "\%")
-        # fix ampersands across all
-        self.ability = fixAmpersands(self.ability)
-        self.summary = fixAmpersands(self.summary)
-        self.summaryPoints = [fixAmpersands(point) for point in self.summaryPoints]
-        self.howToRunPoints = [boldFullyCapitalisedWords(fixAmpersands(point)) for point in self.howToRunPoints]
-        self.examplePoints = [fixAmpersands(point) for point in self.examplePoints]
+        # fix ampersands and character links across all
+        self.ability = fixCharacterLinks(fixAmpersands(self.ability))
+        self.summary = fixCharacterLinks(fixAmpersands(self.summary))
+        self.summaryPoints = [fixCharacterLinks(fixAmpersands(point)) for point in self.summaryPoints]
+        self.howToRunPoints = [fixCharacterLinks(boldFullyCapitalisedWords(fixAmpersands(point))) for point in self.howToRunPoints]
+        self.examplePoints = [fixCharacterLinks(fixAmpersands(point)) for point in self.examplePoints]
         self.flavour = "FLAVOUR TEMPORARILY DISABLED DUE TO COOL ISSUES"
         
         
@@ -144,7 +155,7 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-# characterNamesToFetch = ["Voudon"]
+characterNamesToFetch = characterNamesToFetch[:20]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
