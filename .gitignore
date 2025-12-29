@@ -1,3 +1,14 @@
+# project specific
+icons/
+output.txt
+outputTest.aux
+outputTest.log
+outputTest.pdf
+outputTest.synctex.gz
+outputTest.tex
+outputTest.toc
+roles.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

@@ -27,6 +27,32 @@ def fetchCharacter(characterName):
 def fixAmpersands(input):
     return input.replace("&amp;", "\\&").replace(" & ", " \\& ")
 
+def boldFullyCapitalisedWords(input):
+    words = input.split(" ")
+    output, trailingComma, boldOpen = "", "", False
+    for word in words:
+        if word[-1:] == ",":
+            trailingComma = word[-1:]
+            tempWord = word[:-1]
+        else:
+            trailingComma = ""
+            tempWord = word
+        
+        if isUpperOrDecimal(tempWord) and not boldOpen:
+            output += "\\textbf{" + tempWord + trailingComma + " "
+            boldOpen = True
+        elif isUpperOrDecimal(tempWord):
+            output += tempWord + trailingComma + " "
+        elif boldOpen:
+            output += "}" + tempWord + trailingComma + " "
+            boldOpen = False
+        else:
+            output += tempWord + trailingComma + " "
+    return output.replace(", }", "}, ").replace(" }", "} ")
+
+def isUpperOrDecimal(input):
+    return input.isupper() or input.isdecimal()
+
 # CLASS DEFINITIONS
 
 class clocktowerCharacter:
@@ -103,7 +129,7 @@ class clocktowerCharacter:
         self.ability = fixAmpersands(self.ability)
         self.summary = fixAmpersands(self.summary)
         self.summaryPoints = [fixAmpersands(point) for point in self.summaryPoints]
-        self.howToRunPoints = [fixAmpersands(point) for point in self.howToRunPoints]
+        self.howToRunPoints = [boldFullyCapitalisedWords(fixAmpersands(point)) for point in self.howToRunPoints]
         self.examplePoints = [fixAmpersands(point) for point in self.examplePoints]
         self.flavour = "FLAVOUR TEMPORARILY DISABLED DUE TO COOL ISSUES"
         
@@ -118,7 +144,7 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-characterNamesToFetch = ["Lleech", "Djinn"]
+characterNamesToFetch = ["Leviathan"]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
