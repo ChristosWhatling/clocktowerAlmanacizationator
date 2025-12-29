@@ -123,8 +123,8 @@ class clocktowerCharacter:
         print(self.name + ": " + str(failCount) + " missing info(s)")
         
     def textRemedies(self):
-        # make setup abilities bold
-        self.ability = self.ability.replace("[", "\\textbf{[").replace("]", "]}")
+        # make setup abilities bold and fix % (only in the Voudon's ability so far)
+        self.ability = self.ability.replace("[", "\\textbf{[").replace("]", "]}").replace("%", "\%")
         # fix ampersands across all
         self.ability = fixAmpersands(self.ability)
         self.summary = fixAmpersands(self.summary)
@@ -144,7 +144,7 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-characterNamesToFetch = ["Leviathan"]
+# characterNamesToFetch = ["Voudon"]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
