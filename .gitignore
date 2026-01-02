@@ -1,6 +1,12 @@
 # project specific
 icons/
 output.txt
+output.aux
+output.log
+output.pdf
+output.synctex.gz
+output.tex
+output.toc
 outputTest.aux
 outputTest.log
 outputTest.pdf

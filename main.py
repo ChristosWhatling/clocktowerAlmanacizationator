@@ -1,13 +1,25 @@
 from mediawiki import MediaWiki
 from bs4 import BeautifulSoup
-import json
-import subprocess
+from pylatex import Document
+import json, subprocess
 
 # VARIABLE DEFINITIONS
+
 emptyList = []
 characters = []
 preCharacterLaTeX = "\\documentclass{article}\n\\usepackage[margin=0.5in]{geometry}\n\\usepackage{multicol,lipsum,graphicx,float,ragged2e,mdframed}\n\\usepackage[utf8]{inputenc}\n\\usepackage{textcomp}\n\\usepackage{pifont}\n\\usepackage{CJKutf8}\n\\setlength{\\parindent}{0pt}\n\\tolerance=1\n\\emergencystretch=\\maxdimen\n\\hyphenpenalty=10000\n\\hbadness=10000\n\\setcounter{tocdepth}{2}\n\n\\title{Blood on the Clocktower}\n\\author{Full character almanac}\n\\date{last updated 27-12-2025}\n\\begin{document}\n\\maketitle\n\\begin{multicols}{2}\n\\tableofcontents\n\\end{multicols}\n\\clearpage\n\n"
 postCharacterLaTeX = "\\end{document}"
+
+typeOrder = {
+    "Townsfolk": 0,
+    "Outsider": 1,
+    "Minion": 2,
+    "Demon": 3,
+    "Traveller": 4,
+    "Fabled": 5,
+    "Loric": 6,
+    "Unknown type": 7
+}
 
 # FUNCTION DEFINITIONS
 
@@ -56,10 +68,11 @@ def isUpperOrDecimal(input):
     return input.isupper() or input.isdecimal()
 
 def fixCharacterLinks(input):
+    input = input.replace('<a class="mw-redirect" href="/', '<a href="/') # temp fix for Bootlegger
     if '<a href="/' in input:
         print("Character link deletion triggered!")
         pre = input.split('<a href="/')[0]
-        name = input.split('<a href="/')[1].split('"')[0]
+        name = input.split('<a href="/')[1].split('"')[0].replace("_", " ")
         post = input.split('</span></a>')[1]
         return pre + name + post
     return input
@@ -98,10 +111,12 @@ class clocktowerCharacter:
         failCount = 0
         self.cleanedWikiText = self.wikiText.getText()
         self.iconName = "icons/Icon_" + self.name.lower().replace(" ", "").replace("'", "").replace("-", "") + ".png"
+        self.iconName = "icons/Icon_big_wig.png" if self.iconName == "icons/Icon_bigwig.png" else self.iconName # TEMP FIX
         self.designer = "The Pandemonium Institute"
         try: self.cType = str(self.wikiText.find_all("td")[1]).split('title="Character Types">')[1].split('<')[0]
         except:
             self.cType = "Unknown type"
+            self.cType = "Loric" # temp fix for Loric pages not pulling character types properly
             failCount += 1
         try: self.ability = str(self.wikiText.h2.find_all_next("p")[0]).split('"')[1].split('"')[0]
         except:
@@ -131,7 +146,7 @@ class clocktowerCharacter:
         except:
             self.examplePoints = []
             failCount += 1
-        print(self.name + ": " + str(failCount) + " missing info(s)")
+        print(self.name + " {" + self.cType + "}: " + str(failCount) + " missing info(s)")
         
     def textRemedies(self):
         # make setup abilities bold and fix % (only in the Voudon's ability so far)
@@ -155,7 +170,7 @@ with open('roles.json', 'r') as file:
     data = json.load(file)
     for character in data:
         characterNamesToFetch.append(character['name'])
-characterNamesToFetch = characterNamesToFetch[:20]
+characterNamesToFetch = ["Bootlegger"]
 
 # for each name, fetch that character's info
 for name in characterNamesToFetch:
@@ -169,16 +184,20 @@ for name in characterNamesToFetch:
         
 # sort characters
 tempList = sorted(characters , key=lambda x: x.name)
-characters = sorted(tempList , key=lambda x: x.cType)
+characters = sorted(tempList , key=lambda x: typeOrder[x.cType])
 
 for character in characters:
     print(character.name)
 
 # print LaTeX output to "output.txt"
-with open("output.txt", "w") as f:
+outputFile = "output.txt"
+prevCharType = ""
+with open(outputFile, "w") as f:
     output = preCharacterLaTeX
     for character in characters:
-        output += "\\begin{multicols}{2}\n\\subsection{" + character.name + "}\n\\begin{figure}[H]\n\t\\centering\n\t\\includegraphics[width=0.5\\linewidth]{" + character.iconName + "}"
+        # if 1st character of a type, add section header
+        newCharTypeSection = ("\n\\section{" + character.cType + "}\n") if (prevCharType != character.cType) else ""
+        output += "\\begin{multicols}{2}" + newCharTypeSection + "\n\\subsection{" + character.name + "}\n\\begin{figure}[H]\n\t\\centering\n\t\\includegraphics[width=0.5\\linewidth]{" + character.iconName + "}"
         output += "\\end{figure}\n{\\large " + character.ability + '}\n\\newline\n\\newline\n{\\large \\textit{"' + character.flavour + '"}}\n\\newline\n\n\\subsubsection{Summary}'
         output += "\n" + character.summary + "\n\\begin{itemize}"
         for point in character.summaryPoints:
@@ -192,6 +211,7 @@ with open("output.txt", "w") as f:
         output += "\n\\end{itemize}\n\n\\textit{Designed by " + character.designer + "; icon by " + character.artist + "}\n\n\\end{multicols}\n\\clearpage\n\n"
         print(output, file=f)
         output = ""
+        prevCharType = character.cType
     print(postCharacterLaTeX, file=f)
 subprocess.run(["notepad","output.txt"])
 
